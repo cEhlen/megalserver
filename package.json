@@ -1,0 +1,15 @@
+{
+  "name": "megal-server",
+  "version": "0.0.0",
+  "description": "A server for the MegaL language.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies" : {
+  	"watch": "0.8.0",
+    "bunyan": "0.21.X"
+  },
+  "author": "",
+  "license": "BSD"
+}
