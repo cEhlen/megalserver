@@ -89,4 +89,5 @@ http.createServer(function (req, res) {
     res.writeHead(404);
     res.end('404');
   }
-}).listen(8001);
+}).listen(config.port);
+log.info('Server listening on port ' + config.port);

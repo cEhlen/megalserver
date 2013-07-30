@@ -4,6 +4,9 @@ module.exports = exports = {
   watchDir: "./MegaModels",
 
   // MegaL File ending RegExp
-  megaLRegExp: /.+\.megal/
+  megaLRegExp: /.+\.megal/,
+
+  // Server Port
+  port: 8001
 
 }
