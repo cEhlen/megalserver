@@ -46,7 +46,7 @@ var recursiveTreeview = function (obj, path, id) {
     };
     text += '</ul></li>';
   } else {
-    text += '<li><a href="#" data-path="/files' + path + '/' + obj.name + '">'+obj.name+'</a></li>'
+    text += '<li><a href="#" class="megalLink" data-path="/files' + path + '/' + obj.name + '">'+obj.name+'</a></li>'
   }
   return text;
 }
