@@ -11,11 +11,24 @@ function treeSync (root) {
   if (!s.isDirectory()) return s;
   var children = fs.readdirSync(root);
   s.children = [];
+  var names = [];
   for (var i = 0, l = children.length; i < l; i ++) {
     var child = treeSync(path.join(root, children[i]));
-    child.name = children[i];
-    child.path = path.join(root, children[i]);
-    s.children.push(child);
+	if(!child.isDirectory()) {
+		child.name = children[i].substring(0,children[i].lastIndexOf('.'));
+		if(child.name === 'application'){
+			continue;
+		}
+		child.path = path.join(root, children[i]);
+		if(names.indexOf(child.name) === -1){
+			s.children.push(child);
+			names.push(child.name);
+		}
+	} else{
+		child.name = children[i];
+		child.path = path.join(root, children[i]);
+		s.children.push(child);
+	}	
   }
   return s;
 }
@@ -46,7 +59,7 @@ var recursiveTreeview = function (obj, path, id) {
     };
     text += '</ul></li>';
   } else {
-    text += '<li><a href="#" class="megalLink" data-path="/files' + path + '/' + obj.name + '">'+obj.name+'</a></li>'
+    text += '<li><a href="#" class="megalLink" data-path="/files' + path + '/' + obj.name + '.json">'+obj.name+'</a></li>'
   }
   return text;
 }
@@ -89,7 +102,11 @@ http.createServer(function (req, res) {
   } else if (filesRoute.test(req.url)) {
     var path = filesRoute.exec(req.url);
     var stream = fs.createReadStream('./' + path[1]);
-    stream.pipe(res);
+    stream.on('error', function(err) {
+		res.writeHead(404);
+		res.end('404');
+	});
+	stream.pipe(res);
   } else {
     res.writeHead(404);
     res.end('404');

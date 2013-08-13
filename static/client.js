@@ -1,16 +1,42 @@
 (function () {
   "use strict";
-
+  var currentReport = '';
   $('#navTabs a').click(function (e) {
     e.preventDefault();
     $(this).tab('show');
+	if($(this).attr('href') === '#megal'){
+		loadMegal();
+	}
+	else if($(this).attr('href') === '#config'){
+		$('#conf-warn').html('');
+		loadConf();
+	}
   });
-
+  
+  function loadMegal(){
+	$.ajax({url: currentReport + '.megal'}).done(function(data){
+		$('#megal-code').html(data);
+	});
+  }
+  
+  function loadConf(){
+	$.ajax({url: currentReport + '.conf'}).done(function(data){
+		$('#megal-conf').html(data);		
+	}).fail(function(){
+		$('#conf-warn').html(currentReport.substring(currentReport.lastIndexOf('/')+1) + '.conf not found. Loading default.');
+		$.ajax({url: currentReport.substring(0, currentReport.lastIndexOf('/')+1) + 'application.conf'}).done(function(data){
+			$('#megal-conf').html(data);		
+	})
+	});
+  }
+  
   function addFunctionalityToEachLink () {
     $('.megalLink').each(function () {
       var self = $(this);
       $(this).click(function (e) {
         e.preventDefault();
+		$('#navTabs a[href=\"#report\"]').click();
+		currentReport = self.attr('data-path').substring(0,self.attr('data-path').lastIndexOf('.'));
         loadReport(self.attr('data-path'));
       });
     });
