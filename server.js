@@ -1,4 +1,4 @@
-var watch = require('watch')
+  var watch = require('watch')
   , bunyan = require('bunyan')
   , config = require('./config')
   , http = require('http')
@@ -51,6 +51,18 @@ var recursiveTreeview = function (obj, path, id) {
   return text;
 }
 
+var nRecursiveTreeview = function (obj, path, id, lookup) {
+  var text = '';
+  if(obj.children && obj.children.length > 0) {
+    // Directory
+  } else {
+    // Object
+    
+    text += '<li><a href="#" class="megalLink" data-path="/files' + path + '/' + obj.name + '">'+obj.name+'</a></li>'
+  }
+  return text;
+}
+
 var simpleTemplate = function (data, callback) {
   var rawJSON = treeSync(config.watchDir);
   var tree = recursiveTreeview(rawJSON, '', 0);
@@ -76,15 +88,8 @@ http.createServer(function (req, res) {
     });
   } else if (filesRoute.test(req.url)) {
     var path = filesRoute.exec(req.url);
-    fs.readFile('./' + path[1], {encoding: 'utf8'}, function (err, data) {
-      if(err) {
-        res.writeHead(500);
-        res.end(JSON.stringify(err));
-        return;
-      }
-      res.writeHead(200);
-      res.end(data);
-    });
+    var stream = fs.createReadStream('./' + path[1]);
+    stream.pipe(res);
   } else {
     res.writeHead(404);
     res.end('404');

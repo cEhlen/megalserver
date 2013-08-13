@@ -8,15 +8,13 @@
 
   function addFunctionalityToEachLink () {
     $('.megalLink').each(function () {
-      var self = this;
+      var self = $(this);
       $(this).click(function (e) {
         e.preventDefault();
-        loadReport(self.attributes[2].textContent);
+        loadReport(self.attr('data-path'));
       });
     });
   }
-
-  addFunctionalityToEachLink(); 
 
   function loadReport (path) {
     Handlebars.registerHelper('src', function(text) {
@@ -24,7 +22,6 @@
       var result = "<pre><code>"+text+"</pre></code>";
       return new Handlebars.SafeString(result);
     });
-
 
     $.getJSON(path, function(json) {
       $('#reportTable').empty();
@@ -36,7 +33,7 @@
       $('#reportTable').append(html);
       $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
     });
-
   }
 
+  addFunctionalityToEachLink();
 })();
