@@ -35,11 +35,14 @@ function treeSync (root) {
 }
 
 var runMegaL = function (path) {
-  path = "../" + path;
   log.info("Running Megal for path " + path);
-  megal = spawn('java', ['-cp', '"megal:megal/megal-0.0.1-SNAPSHOT.jar:megal/lib/*.jar"', "megal.Tool", path]);
+  megal = spawn('java', ['-cp', 'megal:megal/megal-0.0.1-SNAPSHOT.jar:megal/lib/*.jar', "megal.Tool", path]);
+  console.log(megal);
   megal.stdout.on('data', function (data) {
-    console.log('stdout: ' + data);
+    log.info('MegaModel execution: ' + data);
+  });
+  megal.stderr.on('data', function (data) {
+    log.warn('Error executing mega model! ' + data + ' ' + path);
   });
   megal.on('close', function (code) {
     log.info('MegaModel done ' + code);
@@ -52,7 +55,7 @@ log.info('Watching directory ' + config.watchDir);
 watch.createMonitor(config.watchDir, function (monitor) {
   monitor.on('created', function (f, stat) {
     if(config.megaLRegExp.test(f)) {
-      log.info('Megamodel added. Start processing.');
+      log.info('Megamodel added. Start processing ' + f);
       runMegaL(f);
     }
   });

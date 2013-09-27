@@ -20,11 +20,11 @@
   }
   
   function loadConf(){
-	$.ajax({url: currentReport + '.conf'}).done(function(data){
+	$.ajax({url: currentReport.substring(0, currentReport.lastIndexOf('/') + 1) + 'mega.conf'}).done(function(data){
 		$('#megal-conf').html(data);		
 	}).fail(function(){
-		$('#conf-warn').html(currentReport.substring(currentReport.lastIndexOf('/')+1) + '.conf not found. Loading default.');
-		$.ajax({url: currentReport.substring(0, currentReport.lastIndexOf('/')+1) + 'application.conf'}).done(function(data){
+		$('#conf-warn').html('mega.conf not found. Loading default.');
+		$.ajax({url:  'files/megal/application.conf'}).done(function(data){
 			$('#megal-conf').html(data);		
 	})
 	});
