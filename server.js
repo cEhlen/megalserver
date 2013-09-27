@@ -3,7 +3,8 @@
   , config = require('./config')
   , http = require('http')
   , fs = require('fs')
-  , path = require('path');
+  , path = require('path')
+  , spawn = require('child_process').spawn;
 
 function treeSync (root) {
   var s = fs.lstatSync(root);
@@ -33,6 +34,17 @@ function treeSync (root) {
   return s;
 }
 
+var runMegaL = function (path) {
+  path = "../" + path;
+  log.info("Running Megal for path " + path);
+  megal = spawn('java', ['-cp', '"megal:megal/megal-0.0.1-SNAPSHOT.jar:megal/lib/*.jar"', "megal.Tool", path]);
+  megal.stdout.on('data', function (data) {
+    console.log('stdout: ' + data);
+  });
+  megal.on('close', function (code) {
+    log.info('MegaModel done ' + code);
+  });
+};
 
 var log = bunyan.createLogger({name: 'megal-server'});
 
@@ -41,6 +53,7 @@ watch.createMonitor(config.watchDir, function (monitor) {
   monitor.on('created', function (f, stat) {
     if(config.megaLRegExp.test(f)) {
       log.info('Megamodel added. Start processing.');
+      runMegaL(f);
     }
   });
 });
